@@ -617,22 +617,29 @@
                 });
             }
 
-            // Check time and render sections (or show closed message)
-            function checkTimeAndRender() {
-                timeStatus.style.display = 'none';
-                
-                if (isExamTime()) {
-                    renderSections();
-                    switchScreen(mainInterface);
-                    currentState = 'sections';
-                } else {
-                    // Show closed message
-                    timeStatus.style.display = 'block';
-                    sectionsContainer.innerHTML = ''; // Clear any existing buttons
-                    switchScreen(mainInterface);
-                    currentState = 'sections';
-                }
-            }
+           // Check time and render sections (or show closed message)
+function checkTimeAndRender() {
+    const timeStatus = document.getElementById('timeStatus');
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    
+    // First, switch to the main interface screen
+    switchScreen(mainInterface);
+    currentState = 'sections';
+    
+    if (isExamTime()) {
+        // Time is within schedule - show class buttons
+        timeStatus.style.display = 'none';
+        renderSections();
+    } else {
+        // Time is outside schedule - show closed message
+        timeStatus.style.display = 'block';
+        sectionsContainer.innerHTML = ''; // Clear any buttons
+        // Move the timeStatus inside the container if needed
+        if (!sectionsContainer.contains(timeStatus)) {
+            sectionsContainer.appendChild(timeStatus);
+        }
+    }
+}
 
             // Password check
             function checkPassword() {
