@@ -330,18 +330,49 @@
             pointer-events: none;
         }
         
-        /* Time Status Message */
-        .time-status {
-            display: none;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 30px 20px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 500px;
-            margin: 20px auto;
-            border: 2px solid #ff6b6b;
-        }
+     /* Time Status Message - Centered on Screen */
+.time-status {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    border: 3px solid #ff6b6b;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.time-status h2 {
+    color: #ff6b6b;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.time-status p {
+    font-size: 18px;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.time-status .highlight {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.time-status .sub {
+    font-size: 14px;
+    color: #aaa;
+    margin-top: 10px;
+}
         
         .time-status h2 {
             color: #ff6b6b;
