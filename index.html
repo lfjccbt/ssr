@@ -330,37 +330,27 @@
             pointer-events: none;
         }
         
-        /* Time Status Message - Centered on Screen */
+        /* Time Status Message */
         .time-status {
             display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0,0,0,0.8);
             color: white;
-            padding: 40px 30px;
-            border-radius: 20px;
+            padding: 30px 20px;
+            border-radius: 15px;
             text-align: center;
             max-width: 500px;
-            width: 90%;
-            border: 3px solid #ff6b6b;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            margin: 20px auto;
+            border: 2px solid #ff6b6b;
         }
         
         .time-status h2 {
             color: #ff6b6b;
-            font-size: 2rem;
             margin-bottom: 15px;
         }
         
         .time-status p {
             font-size: 18px;
             margin-bottom: 10px;
-            line-height: 1.6;
         }
         
         .time-status .highlight {
@@ -371,7 +361,6 @@
         .time-status .sub {
             font-size: 14px;
             color: #aaa;
-            margin-top: 10px;
         }
         
         /* Desktop: side by side */
@@ -460,14 +449,19 @@
             <div class="sub-header"></div>
         </div>
         <div class="sections-overlay">
-            <!-- Time Status Message -->
-            <div id="timeStatus" class="time-status">
-                <h2>⏰ ALL CLASSES ARE LOCKED</h2>
-                <p>The exams are strictly accessible within the college computer lab only</p>
-            </div>
-            <div class="columns-container" id="sectionsContainer">
-                <!-- Class buttons will be dynamically inserted here -->
-            </div>
+           <!-- Time Status Message (Outside the container) -->
+<div id="timeStatus" class="time-status">
+    <h2>⏰ Classes Closed</h2>
+    <p>
+        The exam is available daily from 
+        <span class="highlight" id="openTimeDisplay">9:00 AM</span> to 
+        <span class="highlight" id="closeTimeDisplay">4:00 PM</span>.
+    </p>
+    <p class="sub">Please check back during the scheduled time.</p>
+</div>
+<div class="columns-container" id="sectionsContainer">
+    <!-- Class buttons will be dynamically inserted here -->
+</div>
         </div>
     </div>
 
@@ -623,25 +617,26 @@
                 });
             }
 
-            // Check time and render sections (or show closed message)
-            function checkTimeAndRender() {
-                const timeStatus = document.getElementById('timeStatus');
-                const sectionsContainer = document.getElementById('sectionsContainer');
-                
-                // First, switch to the main interface screen
-                switchScreen(mainInterface);
-                currentState = 'sections';
-                
-                if (isExamTime()) {
-                    // Time is within schedule - show class buttons, hide message
-                    timeStatus.style.display = 'none';
-                    renderSections();
-                } else {
-                    // Time is outside schedule - show message, hide buttons
-                    timeStatus.style.display = 'block';
-                    sectionsContainer.innerHTML = ''; // Clear any buttons
-                }
-            }
+       // Check time and render sections (or show closed message)
+function checkTimeAndRender() {
+    const timeStatus = document.getElementById('timeStatus');
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    
+    // First, switch to the main interface screen
+    switchScreen(mainInterface);
+    currentState = 'sections';
+    
+    if (isExamTime()) {
+        // Time is within schedule - show class buttons, hide message
+        timeStatus.style.display = 'none';
+        renderSections();
+    } else {
+        // Time is outside schedule - show message, hide buttons
+        timeStatus.style.display = 'block';
+        sectionsContainer.innerHTML = ''; // Clear any buttons
+    }
+}
+
 
             // Password check
             function checkPassword() {
@@ -670,16 +665,13 @@
                 }
             }
 
-            // Attach event listeners
             submitBtn.addEventListener('click', checkPassword);
-            passwordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkPassword();
-                }
+            passwordInput.addEventListener('keypress', e => {
+                if (e.key === 'Enter') checkPassword();
             });
 
             // ESC key to go back
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', e => {
                 if (e.key !== 'Escape') return;
                 e.preventDefault();
 
@@ -692,22 +684,20 @@
             });
 
             // INIT
-            window.addEventListener('load', function() {
+            window.addEventListener('load', () => {
                 focusPassword();
             });
 
             // Click anywhere to go fullscreen on first page only
-            document.addEventListener('click', function() {
+            document.addEventListener('click', () => {
                 if (currentState === 'combined') {
                     enterFullscreen();
                 }
-                if (currentState === 'combined') {
-                    focusPassword();
-                }
+                if (currentState === 'combined') focusPassword();
             });
 
             errorMsg.style.display = 'none';
         })();
     </script>
 </body>
-</html>
+</html> 
