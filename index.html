@@ -465,7 +465,12 @@
            <!-- Time Status Message (Outside the container) -->
 <div id="timeStatus" class="time-status">
     <h2>ALL  EXAMS ARE LOCKED </h2>
-    <h3> The exam is only available in the college computer lab </h3>  
+    <p>
+        Exams are accessible only in the college computer lab  daily from 
+        <span class="highlight" id="openTimeDisplay">9:00 AM</span> to 
+        <span class="highlight" id="closeTimeDisplay">4:00 PM</span>.
+    </p>
+    <p class="sub">Please access  during the scheduled time in the college.</p>
        </div>
 <div class="columns-container" id="sectionsContainer">
     <!-- Class buttons will be dynamically inserted here -->
@@ -481,8 +486,8 @@
             // ============================================================
             // AUTOMATIC SCHEDULE: Classes open 9:00 AM - 4:00 PM Daily
             // ============================================================
-            const CLASS_OPEN_HOUR = 9;    // 9 AM
-            const CLASS_CLOSE_HOUR = 16;  // 4 PM (16:00 in 24-hour format)
+            const CLASS_OPEN_HOUR = 8;    // 9 AM
+            const CLASS_CLOSE_HOUR = 16.5;  // 4 PM (16:00 in 24-hour format)
 
             // Display times in 12-hour format
             function formatTime(hour) {
