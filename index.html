@@ -483,24 +483,25 @@
 
     <script>
         (function() {
-            // ============================================================
-            // AUTOMATIC SCHEDULE: Classes open 9:00 AM - 4:00 PM Daily
-            // ============================================================
-            const CLASS_OPEN_HOUR = 8;    // 9 AM
-            const CLASS_CLOSE_HOUR = 16.5;  // 4 PM (16:00 in 24-hour format)
+           // ============================================================
+// AUTOMATIC SCHEDULE: Classes open 9:00 AM - 4:30 PM Daily
+// ============================================================
+const CLASS_OPEN_HOUR = 8;       // 9:00 AM
+const CLASS_CLOSE_HOUR = 16;     // 4:00 PM (hour part)
+const CLASS_CLOSE_MINUTE = 30;   // 30 minutes (for 4:30 PM)
 
-            // Display times in 12-hour format
-            function formatTime(hour) {
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                const h = hour % 12 || 12;
-                return `${h}:00 ${ampm}`;
-            }
-
-            function isExamTime() {
-                const now = new Date();
-                const currentHour = now.getHours();
-                return currentHour >= CLASS_OPEN_HOUR && currentHour < CLASS_CLOSE_HOUR;
-            }
+function isExamTime() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    
+    // Convert current time to total minutes
+    const currentTotalMinutes = currentHour * 60 + currentMinute;
+    const openTotalMinutes = CLASS_OPEN_HOUR * 60;
+    const closeTotalMinutes = CLASS_CLOSE_HOUR * 60 + CLASS_CLOSE_MINUTE;
+    
+    return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes < closeTotalMinutes;
+}
 
             // ============================================================
             // REPLACE WITH YOUR ACTUAL EXAM URLs FOR EACH CLASS
