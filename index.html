@@ -463,235 +463,247 @@
     <!-- Global Copyright -->
     <div class="global-copyright">© LFJC 2026 | All Rights Reserved</div>
 
-    <script>
-        (function() {
-            // ============================================================
-            // AUTOMATIC SCHEDULE: Classes open 8:00 AM - 9:00 PM Daily
-            // ============================================================
-            const CLASS_OPEN_HOUR = 8;    // 8 AM
-            const CLASS_CLOSE_HOUR = 17;  // 5 PM
+   <script>
+    (function() {
+        // ============================================================
+        // AUTOMATIC SCHEDULE: Classes open 8:00 AM - 5:00 PM Daily
+        // SUNDAY: FULL DAY BLOCKED
+        // ============================================================
+        const CLASS_OPEN_HOUR = 8;    // 8 AM
+        const CLASS_CLOSE_HOUR = 17;  // 5 PM
 
-            // Display times in 12-hour format
-            function formatTime(hour) {
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                const h = hour % 12 || 12;
-                return `${h}:00 ${ampm}`;
+        function isExamTime() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTotalMinutes = currentHour * 60 + currentMinute;
+            const openTotalMinutes = CLASS_OPEN_HOUR * 60;
+            const closeTotalMinutes = CLASS_CLOSE_HOUR * 60;
+            
+            // SUNDAY (getDay() = 0) → BLOCK ALL DAY
+            if (now.getDay() === 0) {
+                return false;
             }
+            
+            // Check if within daily schedule (8 AM - 5 PM)
+            return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes < closeTotalMinutes;
+        }
 
-            function isExamTime() {
-                const now = new Date();
-                const currentHour = now.getHours();
-                const currentMinute = now.getMinutes();
-                const currentTotalMinutes = currentHour * 60 + currentMinute;
-                const openTotalMinutes = CLASS_OPEN_HOUR * 60;
-                const closeTotalMinutes = CLASS_CLOSE_HOUR * 60;
-                return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes < closeTotalMinutes;
+        // ============================================================
+        // REPLACE WITH YOUR ACTUAL EXAM URLs FOR EACH CLASS
+        // ============================================================
+        const SECTION_URLS = {
+            "1D": "https://lfjc1d.github.io/1d/",
+            "1M": "https://lfjc1m.github.io/1M/",
+            "1N": "https://lfjc1n.github.io/1m/",
+            "1E": "https://lfjc1e.github.io/1e/",
+            "2D": "https://lfjc2d.github.io/2d/",
+            "2M": "https://lfjc2m.github.io/2m/",
+            "2N": "https://lfjc2n.github.io/2n/",
+            "2E": "https://lfjc2e.github.io/2e/"
+        };
+
+        const REGULAR_PASSWORD = "lfjc2025";
+        // ============================================================
+
+        // DOM Elements
+        const combinedScreen = document.getElementById('combinedScreen');
+        const mainInterface = document.getElementById('mainInterface');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMsg = document.getElementById('errorMessage');
+        const sectionsContainer = document.getElementById('sectionsContainer');
+        const timeStatus = document.getElementById('timeStatus');
+
+        // State
+        let currentState = 'combined';
+        let isFullscreen = false;
+
+        // Fullscreen function
+        function enterFullscreen() {
+            try {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(() => {});
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen().catch(() => {});
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen().catch(() => {});
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen().catch(() => {});
+                }
+            } catch (e) {
+                console.log('Fullscreen not supported:', e);
             }
+        }
 
-            // ============================================================
-            // REPLACE WITH YOUR ACTUAL EXAM URLs FOR EACH CLASS
-            // ============================================================
-            const SECTION_URLS = {
-                "1D": "https://lfjc1d.github.io/1d/",
-                "1M": "https://lfjc1m.github.io/1M/",
-                "1N": "https://lfjc1n.github.io/1m/",
-                "1E": "https://lfjc1e.github.io/1e/",
-                "2D": "https://lfjc2d.github.io/2d/",
-                "2M": "https://lfjc2m.github.io/2m/",
-                "2N": "https://lfjc2n.github.io/2n/",
-                "2E": "https://lfjc2e.github.io/2e/"
-            };
+        function focusPassword() {
+            setTimeout(() => passwordInput?.focus(), 100);
+        }
 
-            const REGULAR_PASSWORD = "lfjc2025";
-            // ============================================================
+        function switchScreen(toScreen) {
+            combinedScreen.classList.remove('active');
+            mainInterface.classList.remove('active');
+            toScreen.classList.add('active');
+        }
 
-            // DOM Elements
-            const combinedScreen = document.getElementById('combinedScreen');
-            const mainInterface = document.getElementById('mainInterface');
-            const passwordInput = document.getElementById('passwordInput');
-            const submitBtn = document.getElementById('submitBtn');
-            const errorMsg = document.getElementById('errorMessage');
-            const sectionsContainer = document.getElementById('sectionsContainer');
-            const timeStatus = document.getElementById('timeStatus');
+        function shakeBox() {
+            const box = document.querySelector('.password-box');
+            box?.style.setProperty('animation', 'shake 0.5s');
+            setTimeout(() => box?.style.removeProperty('animation'), 500);
+        }
 
-            // State
-            let currentState = 'combined';
-            let isFullscreen = false;
+        function showError(msg) {
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = msg;
+            setTimeout(() => errorMsg.style.display = 'none', 3500);
+        }
 
-            // Fullscreen function
-            function enterFullscreen() {
-                try {
-                    const elem = document.documentElement;
-                    if (elem.requestFullscreen) {
-                        elem.requestFullscreen().catch(() => {});
-                    } else if (elem.webkitRequestFullscreen) {
-                        elem.webkitRequestFullscreen().catch(() => {});
-                    } else if (elem.mozRequestFullScreen) {
-                        elem.mozRequestFullScreen().catch(() => {});
-                    } else if (elem.msRequestFullscreen) {
-                        elem.msRequestFullscreen().catch(() => {});
+        // Render section buttons
+        function renderSections() {
+            const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
+            const column1 = sections.slice(0, 4);
+            const column2 = sections.slice(4, 8);
+
+            let html = `
+                <div class="column">
+                    ${column1.map(section => `
+                        <button class="section-btn unlocked" data-section="${section}">
+                            ${section}
+                            <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="column">
+                    ${column2.map(section => `
+                        <button class="section-btn unlocked" data-section="${section}">
+                            ${section}
+                            <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            sectionsContainer.innerHTML = html;
+
+            // Attach click handlers
+            document.querySelectorAll('.section-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    const url = SECTION_URLS[section];
+                    if (!url) {
+                        alert(`URL for section ${section} not configured`);
+                        return;
                     }
-                } catch (e) {
-                    console.log('Fullscreen not supported:', e);
-                }
-            }
 
-            function focusPassword() {
-                setTimeout(() => passwordInput?.focus(), 100);
-            }
+                    // Visual feedback
+                    this.style.transform = 'scale(0.96)';
+                    this.style.opacity = '0.8';
 
-            function switchScreen(toScreen) {
-                combinedScreen.classList.remove('active');
-                mainInterface.classList.remove('active');
-                toScreen.classList.add('active');
-            }
+                    // Open exam
+                    setTimeout(() => {
+                        window.open(url, '_blank');
+                    }, 150);
 
-            function shakeBox() {
-                const box = document.querySelector('.password-box');
-                box?.style.setProperty('animation', 'shake 0.5s');
-                setTimeout(() => box?.style.removeProperty('animation'), 500);
-            }
-
-            function showError(msg) {
-                errorMsg.style.display = 'block';
-                errorMsg.textContent = msg;
-                setTimeout(() => errorMsg.style.display = 'none', 3500);
-            }
-
-            // Render section buttons
-            function renderSections() {
-                const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
-                const column1 = sections.slice(0, 4);
-                const column2 = sections.slice(4, 8);
-
-                let html = `
-                    <div class="column">
-                        ${column1.map(section => `
-                            <button class="section-btn unlocked" data-section="${section}">
-                                ${section}
-                                <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
-                            </button>
-                        `).join('')}
-                    </div>
-                    <div class="column">
-                        ${column2.map(section => `
-                            <button class="section-btn unlocked" data-section="${section}">
-                                ${section}
-                                <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
-                            </button>
-                        `).join('')}
-                    </div>
-                `;
-
-                sectionsContainer.innerHTML = html;
-
-                // Attach click handlers
-                document.querySelectorAll('.section-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const section = this.dataset.section;
-                        const url = SECTION_URLS[section];
-                        if (!url) {
-                            alert(`URL for section ${section} not configured`);
-                            return;
-                        }
-
-                        // Visual feedback
-                        this.style.transform = 'scale(0.96)';
-                        this.style.opacity = '0.8';
-
-                        // Open exam
-                        setTimeout(() => {
-                            window.open(url, '_blank');
-                        }, 150);
-
-                        setTimeout(() => {
-                            this.style.transform = '';
-                            this.style.opacity = '';
-                        }, 300);
-                    });
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.opacity = '';
+                    }, 300);
                 });
-            }
+            });
+        }
 
-            // Check time and render sections (or show closed message)
-            function checkTimeAndRender() {
-                const timeStatus = document.getElementById('timeStatus');
-                const sectionsContainer = document.getElementById('sectionsContainer');
+        // Check time and render sections (or show closed message)
+        function checkTimeAndRender() {
+            const timeStatus = document.getElementById('timeStatus');
+            const sectionsContainer = document.getElementById('sectionsContainer');
+            
+            // First, switch to the main interface screen
+            switchScreen(mainInterface);
+            currentState = 'sections';
+            
+            if (isExamTime()) {
+                // Time is within schedule - show class buttons, hide message
+                timeStatus.style.display = 'none';
+                renderSections();
+            } else {
+                // Time is outside schedule - show message, hide buttons
+                timeStatus.style.display = 'block';
                 
-                // First, switch to the main interface screen
-                switchScreen(mainInterface);
-                currentState = 'sections';
+                // Show different messages based on why it's blocked
+                const now = new Date();
+                if (now.getDay() === 0) {
+                    document.querySelector('#timeStatus h2').textContent = '🔒 SUNDAY - EXAM CLOSED';
+                    document.querySelector('#timeStatus p').textContent = 'Exams are not available on Sundays. Please come back on a weekday.';
+                } else {
+                    document.querySelector('#timeStatus h2').textContent = '⏰ EXAM CLOSED';
+                    document.querySelector('#timeStatus p').textContent = 'Exams are available only between 8:00 AM and 5:00 PM.';
+                }
                 
-                if (isExamTime()) {
-                    // Time is within schedule - show class buttons, hide message
-                    timeStatus.style.display = 'none';
-                    renderSections();
-                } else {
-                    // Time is outside schedule - show message, hide buttons
-                    timeStatus.style.display = 'block';
-                    sectionsContainer.innerHTML = ''; // Clear any buttons
-                }
+                sectionsContainer.innerHTML = ''; // Clear any buttons
             }
+        }
 
-            // Password check
-            function checkPassword() {
-                const pwd = passwordInput.value.trim();
-                errorMsg.style.display = 'none';
-
-                if (!pwd) {
-                    showError('Please enter a password');
-                    shakeBox();
-                    focusPassword();
-                    return;
-                }
-
-                if (pwd === REGULAR_PASSWORD) {
-                    // Enter fullscreen immediately
-                    enterFullscreen();
-
-                    // Check time and render sections (or show closed message)
-                    checkTimeAndRender();
-                    passwordInput.value = '';
-                } else {
-                    showError('Incorrect password. Try again.');
-                    passwordInput.value = '';
-                    shakeBox();
-                    focusPassword();
-                }
-            }
-
-            submitBtn.addEventListener('click', checkPassword);
-            passwordInput.addEventListener('keypress', e => {
-                if (e.key === 'Enter') checkPassword();
-            });
-
-            // ESC key to go back
-            document.addEventListener('keydown', e => {
-                if (e.key !== 'Escape') return;
-                e.preventDefault();
-
-                if (currentState === 'sections') {
-                    switchScreen(combinedScreen);
-                    currentState = 'combined';
-                    passwordInput.value = '';
-                    focusPassword();
-                }
-            });
-
-            // INIT
-            window.addEventListener('load', () => {
-                focusPassword();
-            });
-
-            // Click anywhere to go fullscreen on first page only
-            document.addEventListener('click', () => {
-                if (currentState === 'combined') {
-                    enterFullscreen();
-                }
-                if (currentState === 'combined') focusPassword();
-            });
-
+        // Password check
+        function checkPassword() {
+            const pwd = passwordInput.value.trim();
             errorMsg.style.display = 'none';
-        })();
-    </script>
+
+            if (!pwd) {
+                showError('Please enter a password');
+                shakeBox();
+                focusPassword();
+                return;
+            }
+
+            if (pwd === REGULAR_PASSWORD) {
+                // Enter fullscreen immediately
+                enterFullscreen();
+
+                // Check time and render sections (or show closed message)
+                checkTimeAndRender();
+                passwordInput.value = '';
+            } else {
+                showError('Incorrect password. Try again.');
+                passwordInput.value = '';
+                shakeBox();
+                focusPassword();
+            }
+        }
+
+        submitBtn.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // ESC key to go back
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            e.preventDefault();
+
+            if (currentState === 'sections') {
+                switchScreen(combinedScreen);
+                currentState = 'combined';
+                passwordInput.value = '';
+                focusPassword();
+            }
+        });
+
+        // INIT
+        window.addEventListener('load', () => {
+            focusPassword();
+        });
+
+        // Click anywhere to go fullscreen on first page only
+        document.addEventListener('click', () => {
+            if (currentState === 'combined') {
+                enterFullscreen();
+            }
+            if (currentState === 'combined') focusPassword();
+        });
+
+        errorMsg.style.display = 'none';
+    })();
+</script>
 </body>
 </html>
